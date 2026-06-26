@@ -26,6 +26,9 @@ jobs:
       - name: Build with dotnet
         run: dotnet build Api/CourierMaxApi.sln --configuration Release
 
+      - name: Test with dotnet
+        run: dotnet test Api/CourierMaxApi.sln --configuration Release --no-build --verbosity normal
+
       - name: dotnet publish
         run: dotnet publish Api/CourierMaxApi.csproj -c Release -o "${{env.DOTNET_ROOT}}/myapp"
 

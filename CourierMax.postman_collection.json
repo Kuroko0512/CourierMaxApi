@@ -1,0 +1,177 @@
+{
+  "info": {
+    "name": "CourierMax API",
+    "description": "Colección para probar la API de gestión de envíos CourierMax. Ejecuta primero 'Auth > Login': el token se guarda automáticamente en la variable {{token}}.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    { "key": "baseUrl", "value": "https://localhost:7000" },
+    { "key": "token", "value": "" }
+  ],
+  "auth": {
+    "type": "bearer",
+    "bearer": [{ "key": "token", "value": "{{token}}", "type": "string" }]
+  },
+  "item": [
+    {
+      "name": "Auth",
+      "item": [
+        {
+          "name": "Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "type": "text/javascript",
+                "exec": [
+                  "if (pm.response.code === 200) {",
+                  "    const body = pm.response.json();",
+                  "    pm.collectionVariables.set('token', body.token);",
+                  "    pm.test('Token recibido', () => pm.expect(body.token).to.be.a('string'));",
+                  "}"
+                ]
+              }
+            }
+          ],
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"usuario\": \"Operador 1\",\n  \"password\": \"Courier123*\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/auth/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "auth", "login"]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Envios",
+      "item": [
+        {
+          "name": "Crear envío",
+          "request": {
+            "method": "POST",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"tipoServicioId\": 1,\n  \"remitenteNombre\": \"Ana Pérez\",\n  \"remitenteTelefono\": \"3001234567\",\n  \"remitenteDireccionRecogida\": \"Calle 1 #2-3\",\n  \"destinatarioNombre\": \"Luis Gómez\",\n  \"destinatarioTelefono\": \"3007654321\",\n  \"destinatarioDireccionEntrega\": \"Calle 4 #5-6\",\n  \"pesoKg\": 2.5,\n  \"largoCm\": 30,\n  \"anchoCm\": 20,\n  \"altoCm\": 10,\n  \"tipoPaqueteId\": 2,\n  \"ciudadOrigenId\": 1,\n  \"ciudadDestinoId\": 2\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios"]
+            }
+          }
+        },
+        {
+          "name": "Listar envíos",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios"]
+            }
+          }
+        },
+        {
+          "name": "Consultar por código (público)",
+          "request": {
+            "auth": { "type": "noauth" },
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/CM-00012345",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "CM-00012345"]
+            }
+          }
+        },
+        {
+          "name": "Cambiar estado",
+          "request": {
+            "method": "PATCH",
+            "header": [{ "key": "Content-Type", "value": "application/json" }],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"nuevoEstado\": \"ASIGNADO\",\n  \"motivo\": null\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/1/estado",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "1", "estado"]
+            }
+          }
+        },
+        {
+          "name": "Envíos atrasados",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/envios/atrasados?desde=2026-01-01&hasta=2026-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "envios", "atrasados"],
+              "query": [
+                { "key": "desde", "value": "2026-01-01" },
+                { "key": "hasta", "value": "2026-12-31" }
+              ]
+            }
+          }
+        }
+      ]
+    },
+    {
+      "name": "Catálogos y métricas",
+      "item": [
+        {
+          "name": "Roles",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/rol", "host": ["{{baseUrl}}"], "path": ["api", "rol"] }
+          }
+        },
+        {
+          "name": "Tipos de paquete",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/tipopaquete", "host": ["{{baseUrl}}"], "path": ["api", "tipopaquete"] }
+          }
+        },
+        {
+          "name": "Tipos de servicio",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": { "raw": "{{baseUrl}}/api/tiposervicio", "host": ["{{baseUrl}}"], "path": ["api", "tiposervicio"] }
+          }
+        },
+        {
+          "name": "Métricas por conductor",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/metricas/conductores?desde=2026-01-01&hasta=2026-12-31",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "metricas", "conductores"],
+              "query": [
+                { "key": "desde", "value": "2026-01-01" },
+                { "key": "hasta", "value": "2026-12-31" }
+              ]
+            }
+          }
+        }
+      ]
+    }
+  ]
+}
