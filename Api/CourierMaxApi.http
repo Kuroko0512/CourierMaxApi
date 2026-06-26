@@ -1,0 +1,6 @@
+@CourierMaxApi_HostAddress = http://localhost:5242
+
+GET {{CourierMaxApi_HostAddress}}/weatherforecast/
+Accept: application/json
+
+###
